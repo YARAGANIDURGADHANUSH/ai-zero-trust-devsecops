@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-    - name: Checkout Repository
+    
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Setup Python
@@ -18,29 +18,29 @@ jobs:
       with:
         python-version: "3.10"
 
-    - name: Install Dependencies
+    - name: Install dependencies
       run: |
         pip install -r app/requirements.txt
 
-    - name: Validate Python Code
+    - name: Validate Python code
       run: |
         python -m py_compile app/app.py
-
-    - name: Install Trivy Scanner
-      run: |
-        sudo apt-get update
-        sudo apt-get install wget -y
-        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_Linux-64bit.deb
-        sudo dpkg -i trivy_0.50.1_Linux-64bit.deb
-
-    - name: Scan Filesystem Vulnerabilities
-      run: |
-        trivy fs . --exit-code 0 --severity HIGH,CRITICAL
 
     - name: Build Docker Image
       run: |
         docker build -t devsecops-app -f docker/Dockerfile .
 
-    - name: Scan Docker Image
-      run: |
-        trivy image devsecops-app --exit-code 0 --severity HIGH,CRITICAL
+    # Filesystem Security Scan
+    - name: Run Trivy filesystem scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        severity: 'HIGH,CRITICAL'
+
+    # Container Security Scan
+    - name: Run Trivy image scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'devsecops-app'
+        severity: 'HIGH,CRITICAL'
