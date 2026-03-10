@@ -6,7 +6,7 @@ def load_data():
     Load pipeline metrics dataset
     """
     try:
-        data = pd.read_csv("pipeline_metrics.csv")
+        data = pd.read_csv("ai_security/pipeline_metrics.csv")
         print("Dataset loaded successfully")
         print(data.head())
         return data
