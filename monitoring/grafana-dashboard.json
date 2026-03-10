@@ -1,0 +1,10 @@
+{
+  "title": "DevSecOps Monitoring Dashboard",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Application Requests",
+      "targets": []
+    }
+  ]
+}
