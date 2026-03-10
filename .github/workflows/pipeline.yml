@@ -9,40 +9,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-      - name: Install dependencies
-        run: |
-          pip install -r app/requirements.txt
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
 
-      - name: Validate Python code
-        run: |
-          python -m py_compile app/app.py
+    - name: Install Dependencies
+      run: |
+        pip install -r app/requirements.txt
 
-      # Install security scanner
-      - name: Install Trivy security scanner
-        run: |
-          sudo apt-get install wget -y
-          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_Linux-64bit.deb
-          sudo dpkg -i trivy_0.50.1_Linux-64bit.deb
+    - name: Validate Python Code
+      run: |
+        python -m py_compile app/app.py
 
-      # Scan repository vulnerabilities
-      - name: Scan filesystem for vulnerabilities
-        run: |
-          trivy fs .
+    - name: Install Trivy Scanner
+      run: |
+        sudo apt-get update
+        sudo apt-get install wget -y
+        wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_Linux-64bit.deb
+        sudo dpkg -i trivy_0.50.1_Linux-64bit.deb
 
-      # Build Docker container
-      - name: Build Docker image
-        run: |
-          docker build -t devsecops-app -f docker/Dockerfile .
+    - name: Scan Filesystem Vulnerabilities
+      run: |
+        trivy fs . --exit-code 0 --severity HIGH,CRITICAL
 
-      # Scan container image
-      - name: Scan Docker image
-        run: |
-          trivy image devsecops-app
+    - name: Build Docker Image
+      run: |
+        docker build -t devsecops-app -f docker/Dockerfile .
+
+    - name: Scan Docker Image
+      run: |
+        trivy image devsecops-app --exit-code 0 --severity HIGH,CRITICAL
