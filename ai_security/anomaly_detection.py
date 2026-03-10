@@ -1,14 +1,15 @@
 import pandas as pd
 from sklearn.ensemble import IsolationForest
 
+
 def load_data():
     """
     Load pipeline metrics dataset
     """
     try:
         data = pd.read_csv("ai_security/pipeline_metrics.csv")
-        print("Dataset loaded successfully")
-        print(data.head())
+        print("Dataset loaded successfully\n")
+        print(data)
         return data
     except Exception as e:
         print("Error loading dataset:", e)
@@ -17,7 +18,7 @@ def load_data():
 
 def train_model(data):
     """
-    Train Isolation Forest model
+    Train Isolation Forest anomaly detection model
     """
     model = IsolationForest(
         n_estimators=100,
@@ -31,14 +32,15 @@ def train_model(data):
 
 def detect_anomalies(model, data):
     """
-    Predict anomalies in the dataset
+    Detect abnormal pipeline behavior
     """
     predictions = model.predict(data)
 
     results = data.copy()
     results["anomaly"] = predictions
 
-    print("\nDetection Results:")
+    print("\nDetection Results:\n")
+
     for index, row in results.iterrows():
         if row["anomaly"] == -1:
             print(f"⚠ Anomaly detected at record {index}: {row.values}")
@@ -49,7 +51,7 @@ def detect_anomalies(model, data):
 
 
 def main():
-    print("AI Security Module - Pipeline Anomaly Detection")
+    print("\nAI Security Module — DevSecOps Pipeline Monitoring\n")
 
     data = load_data()
 
