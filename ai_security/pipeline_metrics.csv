@@ -1,0 +1,6 @@
+deploy_frequency,cpu_usage,network_requests
+10,40,200
+11,42,210
+9,39,198
+12,41,205
+50,90,800
