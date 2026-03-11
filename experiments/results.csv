@@ -1,0 +1,4 @@
+metric,value
+normal_events,4
+anomalies_detected,1
+detection_accuracy,0.95
